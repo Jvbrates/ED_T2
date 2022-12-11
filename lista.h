@@ -5,6 +5,9 @@
 #ifndef T2__LISTA_H
 #define T2__LISTA_H
 
+#ifndef nullprt
+#define nullptr NULL
+#endif
 
 #include <stdbool.h>
 //Struct
@@ -71,6 +74,5 @@ bool comparString(char *a, char*b);
   else return nullptr
   This function is designed to used by callback*/
 void *searchByPlaca(void *Vlist, void *Vplaca);
-
 
 #endif//T2__LISTA_H

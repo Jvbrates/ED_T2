@@ -5,9 +5,9 @@
 #include "arvores.h"
 #include <stdlib.h>
 #include <stdbool.h>
-#ifndef nullprt
-#define nullptr NULL
-#endif
+#include "lista.h"
+#include <string.h>
+
 typedef struct arv tree;
 
 struct arv {
@@ -55,3 +55,58 @@ tree *search(tree *root, void *data, bool (*f_find)(void *, void *), bool (*f_le
 }
 
 //Spec
+
+bool placa_lessthan(void *data1, void *data2){
+  veiculo *v1 = (veiculo *)data1;
+  veiculo *v2 = (veiculo *)data2;
+
+  int x = strcmp(v1->placa, v2->placa);
+
+  if(x < 0)
+    return true;
+  return false;
+}
+
+bool marca_lessthan(void *data1, void *data2){
+  veiculo *v1 = (veiculo *)data1;
+  veiculo *v2 = (veiculo *)data2;
+
+  int x = strcmp(v1->marca, v2->marca);
+
+  if(x < 0)
+    return true;
+  return false;
+}
+
+bool placa_find(void *rootV, void *dataV){
+  veiculo  * v1 = (veiculo *)((lista *)rootV)->data;
+  veiculo  * v2 = (veiculo *)dataV;
+
+  return !strcmp(v1->placa, v2->placa);
+
+}
+
+bool marca_find(void *rootV, void *dataV) {
+  veiculo *v1 = (veiculo *)((lista *)rootV)->data;
+  veiculo *v2 = (veiculo *)dataV;
+
+  return !strcmp(v1->marca, v2->marca);
+}
+
+//Ano
+
+bool ano_lessthan(void *data1, void *data2){
+  veiculo *v1 = (veiculo *)data1;
+  veiculo *v2 = (veiculo *)data2;
+
+  return v1->ano < v2->ano;
+
+}
+
+
+bool ano_find(void *rootV, void *dataV) {
+  veiculo *v1 = (veiculo *)((lista *)rootV)->data;
+  veiculo *v2 = (veiculo *)dataV;
+
+  return (v1->ano == v2->ano);
+}

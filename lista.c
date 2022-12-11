@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
-#define nullptr NULL
+#include <string.h>
 
 typedef  void * f(void *, void *);
 
@@ -14,21 +14,21 @@ typedef  void * f(void *, void *);
 
 
 void * callback(lista  *list, void* f(void *, void *), void *data){
-    for (lista * item = list; item != NULL ; item=item->next) {
+    for (lista * item = list; item != nullptr ; item=item->next) {
         void * retorno =  f(item, data);
-        if(retorno != NULL) {
+        if(retorno != nullptr) {
             return retorno;
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 //criaLista
 lista * newList(void *data){
     lista * nL = malloc(sizeof(lista));
-    nL->next = NULL;
-    nL->previous = NULL;
+    nL->next = nullptr;
+    nL->previous = nullptr;
     nL->data = data;
 
     return nL;
@@ -62,7 +62,7 @@ void * deleteByPointer(void*Vcompar,  void *Vremove){
         return remove;//Alright
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void * callbackDelete(lista*compar,  lista *remove){
@@ -72,7 +72,12 @@ void * callbackDelete(lista*compar,  lista *remove){
 
 //Spec
 
-//bool higherThanPlaca(char *A, char *B);
+bool higherThanPlaca(char *A, char *B){
+    int x = strcmp(A, B);
+    if(x > 0)
+      return true;
+    return false;
+};
 
 void *addPlaca(void *list, void *dataVoid){
     veiculo *dataInsert = (veiculo *)dataVoid;
@@ -83,7 +88,7 @@ void *addPlaca(void *list, void *dataVoid){
         return insertNext(list, nL);
     }
 
-    return NULL;
+    return nullptr;
 
 }
 
@@ -96,7 +101,9 @@ void *printVeiculo(void *list, void *nada){
     return nullptr;
 }
 
-bool comparString(char *a, char*b);
+bool comparString(char *a, char*b){
+    return !strcmp(a, b);
+};
 
 void *searchByPlaca(void *Vlist, void *Vplaca){
     lista * list = (lista *)Vlist;
