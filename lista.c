@@ -35,15 +35,15 @@ lista * newList(void *data){
 }
 
 lista * insertNext(lista *source, lista *new){
-    lista * temp = source->next;
+
+  lista * temp = source->next;
     source->next = new;
     new->previous = source;
     new->next = temp;
 
     if(temp)
         temp->next = new;
-
-    return new;
+    return source;
 }
 
 void * deleteByPointer(void*Vcompar,  void *Vremove){
@@ -58,15 +58,26 @@ void * deleteByPointer(void*Vcompar,  void *Vremove){
         if(remove->previous)
             remove->previous->next = remove->next;
 
+        lista * t = remove->next;
         free(remove);
-        return remove;//Alright
+        if(t)
+          return t;//Alright
+        return remove;
     }
 
     return nullptr;
 }
 
 void * callbackDelete(lista*compar,  lista *remove){
-    return callback(compar, deleteByPointer, remove);
+
+  lista *t = callback(compar, deleteByPointer, remove);
+  if(compar == remove) {
+    if(t == remove){
+      return nullptr;
+    }
+    return t;
+  }
+  return compar;
 }
 
 
@@ -80,25 +91,30 @@ bool higherThanPlaca(char *A, char *B){
 };
 
 void *addPlaca(void *list, void *dataVoid){
+  if(list) {
     veiculo *dataInsert = (veiculo *)dataVoid;
     veiculo *datacompar = (veiculo *)((lista *)list)->data;
 
-    if(higherThanPlaca(dataInsert->placa, datacompar->placa)){
-        lista * nL = newList(dataVoid);
-        return insertNext(list, nL);
+    if (higherThanPlaca(dataInsert->placa, datacompar->placa)) {
+      lista *nL = newList(dataVoid);
+      return insertNext(list, nL);
     }
+  }
 
-    return nullptr;
+  lista *nL = newList(dataVoid);
+  return nL;
 
 }
 
 void *printVeiculo(void *list, void *nada){
-    veiculo * v = (veiculo *)((lista*)list)->data;
+
+  if(list) {
+    veiculo *v = (veiculo *)((lista *)list)->data;
     printf("PLACA: %s\n", v->placa);
     printf("MARCA: %s\n", v->marca);
     printf("ANO: %i\n\n\n", v->ano);
-
-    return nullptr;
+  }
+  return nullptr;
 }
 
 bool comparString(char *a, char*b){
