@@ -8,7 +8,7 @@
 #ifndef nullprt
 #define nullptr NULL
 #endif
-
+#include <string.h>
 #include <stdbool.h>
 //Struct
 typedef struct L lista;
@@ -19,6 +19,12 @@ struct L {
     //lista * father;
 };
 
+typedef
+enum ordem{
+  EQUAL = 0,
+  HIGHER = 1,
+  LESS = -1
+} ordem;
 //Generic
 
 /* Gets the list pointer then execute f(list, data), next execute recursively for the list->next
@@ -39,10 +45,15 @@ lista * insertNext(lista *source, lista *new);
   is correctly organized from this function
   Return the previous list from the list that is removed
   OBS: This function not delete the data restrained by the lista */
-void * deleteByPointer(void*Vcompar,  void *Vremove);
+void * deleteList(lista *remove);
 
 /* This function execute the deletebypointer using the callback function*/
 void * callbackDelete(lista*compar,  lista *remove);
+
+void *addList(lista * list, lista *dataVoid, ordem (*order_function)(void *, void *));
+
+
+ordem placaOrdem(void *A, void *B);
 
 //Specific
 

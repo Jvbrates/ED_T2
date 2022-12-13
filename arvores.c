@@ -4,17 +4,8 @@
 
 #include "arvores.h"
 #include <stdlib.h>
-#include <stdbool.h>
 #include "lista.h"
 #include <string.h>
-
-typedef struct arv tree;
-
-struct arv {
-    void *data;
-    tree * esq;
-    tree * dir;
-};
 
 //General
 tree * createTree(void *data){
@@ -57,8 +48,8 @@ tree *search(tree *root, void *data, bool (*f_find)(void *, void *), bool (*f_le
 //Spec
 
 bool placa_lessthan(void *data1, void *data2){
-  veiculo *v1 = (veiculo *)data1;
-  veiculo *v2 = (veiculo *)data2;
+  veiculo *v1 = (veiculo *)((lista *)data1)->data;
+  veiculo *v2 = (veiculo *)((lista *)data2)->data;
 
   int x = strcmp(v1->placa, v2->placa);
 
@@ -68,8 +59,8 @@ bool placa_lessthan(void *data1, void *data2){
 }
 
 bool marca_lessthan(void *data1, void *data2){
-  veiculo *v1 = (veiculo *)data1;
-  veiculo *v2 = (veiculo *)data2;
+  veiculo *v1 = (veiculo *)((lista *)data1)->data;
+  veiculo *v2 = (veiculo *)((lista *)data2)->data;
 
   int x = strcmp(v1->marca, v2->marca);
 
@@ -80,33 +71,31 @@ bool marca_lessthan(void *data1, void *data2){
 
 bool placa_find(void *rootV, void *dataV){
   veiculo  * v1 = (veiculo *)((lista *)rootV)->data;
-  veiculo  * v2 = (veiculo *)dataV;
+  char  * v2 = (char *)dataV;
 
-  return !strcmp(v1->placa, v2->placa);
+  return !strcmp(v1->placa, v2);
 
 }
 
 bool marca_find(void *rootV, void *dataV) {
   veiculo *v1 = (veiculo *)((lista *)rootV)->data;
-  veiculo *v2 = (veiculo *)dataV;
+  char *v2 = (char *)dataV;
 
-  return !strcmp(v1->marca, v2->marca);
+  return !strcmp(v1->marca, v2);
 }
+
 
 //Ano
-
 bool ano_lessthan(void *data1, void *data2){
-  veiculo *v1 = (veiculo *)data1;
-  veiculo *v2 = (veiculo *)data2;
+  veiculo *v1 = (veiculo *)((lista *)data1)->data;
+  veiculo *v2 = (veiculo *)((lista *)data2)->data;
 
-  return v1->ano < v2->ano;
+  return (v1->ano < v2->ano);
 
 }
-
 
 bool ano_find(void *rootV, void *dataV) {
   veiculo *v1 = (veiculo *)((lista *)rootV)->data;
-  veiculo *v2 = (veiculo *)dataV;
-
-  return (v1->ano == v2->ano);
+  int *v2 = (int *)dataV;
+  return (v1->ano == *v2);
 }

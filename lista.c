@@ -34,52 +34,71 @@ lista * newList(void *data){
     return nL;
 }
 
-lista * insertNext(lista *source, lista *new){
-
-  lista * temp = source->next;
-    source->next = new;
-    new->previous = source;
-    new->next = temp;
-
-    if(temp)
-        temp->next = new;
-    return source;
-}
-
-void * deleteByPointer(void*Vcompar,  void *Vremove){
-    lista * compar = (lista *)Vcompar;
-    lista * remove = (lista *)Vremove;
 
 
-    if(compar == remove){
-        if(remove->next)
-            remove->next->previous = remove->previous;
+void * deleteList(lista *remove){
 
-        if(remove->previous)
-            remove->previous->next = remove->next;
 
-        lista * t = remove->next;
-        free(remove);
-        if(t)
-          return t;//Alright
-        return remove;
+  printVeiculo(remove, nullptr);
+  if(remove->next) {
+    remove->next->previous = remove->previous;
+  }
+
+  if(remove->previous) {
+
+    printVeiculo(remove->previous, nullptr);
+    remove->previous->next = remove->next;
     }
 
-    return nullptr;
+    //free(remove);
+    return remove->next;
 }
 
 void * callbackDelete(lista*compar,  lista *remove){
 
-  lista *t = callback(compar, deleteByPointer, remove);
-  if(compar == remove) {
-    if(t == remove){
-      return nullptr;
-    }
-    return t;
+  if(!compar || !remove){
+    return compar;
   }
+  if(compar == remove){
+    deleteList(remove);
+    return compar->next;
+  }
+
+  compar->next = callbackDelete(compar->next, remove);
+
   return compar;
 }
 
+void *addList(lista * list, lista* nList, ordem (*order_function)(void *, void *)){
+  if(list){
+    ordem r = order_function(list->data, nList->data);
+    if(r == LESS){
+      list->next = addList(list->next, nList, order_function);
+      printf("LESS\n");
+      return list;
+    } else if (r == HIGHER){
+      printf("HIGHER\n");
+      lista  * T = nList;
+      T->next = list;
+      T->previous = list->previous;
+
+      if(list->previous){
+        list->previous->next = T;
+      }
+
+      //T->previous = list;
+
+      return  T;
+    } else {
+      printf("IGUAL??\n");
+    }
+
+    return list;
+
+  }
+
+  return nList;
+}
 
 //Spec
 
@@ -90,20 +109,16 @@ bool higherThanPlaca(char *A, char *B){
     return false;
 };
 
-void *addPlaca(void *list, void *dataVoid){
-  if(list) {
-    veiculo *dataInsert = (veiculo *)dataVoid;
-    veiculo *datacompar = (veiculo *)((lista *)list)->data;
 
-    if (higherThanPlaca(dataInsert->placa, datacompar->placa)) {
-      lista *nL = newList(dataVoid);
-      return insertNext(list, nL);
-    }
-  }
+ordem placaOrdem(void *A, void *B){
 
-  lista *nL = newList(dataVoid);
-  return nL;
+  int x =  strcmp(((veiculo *)A)->placa, ((veiculo *)B)->placa);
 
+  if(x == 0 )
+    return  EQUAL;
+  if(x>0)
+    return HIGHER;
+  return LESS;
 }
 
 void *printVeiculo(void *list, void *nada){
