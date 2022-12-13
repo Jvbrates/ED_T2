@@ -3,22 +3,31 @@
 #include "arvores.h"
 #include <stdlib.h>
 
-void addVehicle(lista **mainList, tree *byYear,
-                tree *byLicensePlate, tree *byBrand)
+void addVehicle(lista **mainList, tree **byYear,
+                tree **byLicensePlate, tree **byBrand)
 {
 
   veiculo * nV = malloc(sizeof(veiculo));
 
   char * placa = malloc(sizeof(char)*100);
   char * marca = malloc(sizeof(char)*100);
+
   scanf("%s", marca);
   scanf("%s", placa);
+  scanf("%i", &nV->ano);
 
   nV->placa = placa;
   nV->marca = marca;
-  scanf("%i", &nV->ano);
 
-  *mainList = addList(*mainList, newList(nV), placaOrdem);
+  lista * nL = newList(nV);
+  printf("Adding to mainList\n");
+  *mainList = addList(*mainList, nL, placaOrdem);
+  printf("Adding to byBrand\n");
+  *byBrand = addSample(*byBrand, nL, marca_lessthan);
+  printf("Adding to LicensePlate\n");
+  *byLicensePlate = addSample(*byLicensePlate, nL, placa_lessthan);
+  printf("Adding to byYear\n");
+  *byYear = addSample(*byYear, nL, ano_lessthan);
 
 }
 
@@ -36,10 +45,10 @@ int main() {
     while (x){
       switch (x) {
       case 1: {
-        addVehicle(&mainList, byYear, byLicensePlate, byBrand);
+        addVehicle(&mainList, &byYear,
+                   &byLicensePlate, &byBrand);
         break ;
       }
-
       case 2:{
         printf("\nDELETE%i\n", x);
         callback(mainList, printVeiculo, nullptr);
@@ -57,6 +66,8 @@ int main() {
       scanf("%i", &x);
     }
 
+    printf("Em ordem por ano \n");
+    emordem(byYear, nullptr, printTree);
 
 
 

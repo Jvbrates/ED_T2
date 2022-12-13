@@ -50,7 +50,7 @@ void * deleteList(lista *remove);
 /* This function execute the deletebypointer using the callback function*/
 void * callbackDelete(lista*compar,  lista *remove);
 
-void *addList(lista * list, lista *dataVoid, ordem (*order_function)(void *, void *));
+void *addList(lista * list, lista *nList, ordem (*order_function)(void *, void *));
 
 
 ordem placaOrdem(void *A, void *B);

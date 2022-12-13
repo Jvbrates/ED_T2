@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include "lista.h"
 #include <string.h>
+#include <stdio.h>
+
 
 //General
 tree * createTree(void *data){
@@ -21,12 +23,18 @@ tree * createTree(void *data){
 
 tree *addSample(tree *root, void *data, bool (*f_lessthan)(void *, void *)){
     if(root){
-        if((*f_lessthan)(root, data)){
+      printf("Antes de F_lessthan\n");
+        if((*f_lessthan)(root->data, data)){
+            printf("Erro em F_lessthan\n");
             root->dir = addSample(root->dir, data, f_lessthan);
         } else {
+            printf("Erro em F_lessthan\n");
             root->esq = addSample(root->esq, data, f_lessthan);
         }
+
+
     } else {
+        printf("Não deve cair aqui\n");
         tree * nNode = createTree(data);
         return nNode;
     }
@@ -45,6 +53,42 @@ tree *search(tree *root, void *data, bool (*f_find)(void *, void *), bool (*f_le
     return root;
 }
 
+void * preOrdem(tree *root, void *data,void *(* Func)(void *, void *)){
+  if(root){
+    void * retorno = Func(root, data);
+    if(!retorno){
+      retorno = preOrdem(root->esq, data, Func);
+
+      if(!retorno) {
+        return  preOrdem(root->dir, data, Func);
+      }
+      return retorno;
+    }else{
+      return retorno;
+    }
+
+
+  }
+  return nullptr;
+}
+
+
+void * emordem(tree *root, void *data,void *(* Func)(void *, void *)){
+  if(root){
+    void * retorno = emordem(root->esq, data, Func);
+    if(retorno){
+      return retorno;
+    }
+    retorno = Func(root, data);
+
+    if(retorno){
+      return retorno;
+    }
+
+    return emordem(root->dir, data, Func);
+  }
+  return nullptr;
+}
 //Spec
 
 bool placa_lessthan(void *data1, void *data2){
@@ -98,4 +142,12 @@ bool ano_find(void *rootV, void *dataV) {
   veiculo *v1 = (veiculo *)((lista *)rootV)->data;
   int *v2 = (int *)dataV;
   return (v1->ano == *v2);
+}
+
+//Print
+
+void * printTree(void *node, void* null){
+  printVeiculo(((tree *)node)->data, nullptr);
+
+  return  nullptr;
 }

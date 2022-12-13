@@ -46,3 +46,6 @@ bool ano_lessthan(void *data1, void *data2);
 
 bool ano_find(void *rootV, void *dataV);
 
+void * emordem(tree *root, void *data,void *(* Func)(void *, void *));
+
+void * printTree(void *node, void* null);
