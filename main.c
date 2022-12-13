@@ -11,56 +11,63 @@ void addVehicle(lista **mainList, tree **byYear,
 
   char * placa = malloc(sizeof(char)*100);
   char * marca = malloc(sizeof(char)*100);
-
+  printf("Marca:\n");
   scanf("%s", marca);
+  printf("Placa:\n");
   scanf("%s", placa);
+  printf("Ano:\n");
   scanf("%i", &nV->ano);
 
   nV->placa = placa;
   nV->marca = marca;
 
   lista * nL = newList(nV);
-  printf("Adding to mainList\n");
+  printf("Adding to mainList...\n");
   *mainList = addList(*mainList, nL, placaOrdem);
-  printf("Adding to byBrand\n");
+  printf("Adding to byBrand...\n");
   *byBrand = addSample(*byBrand, nL, marca_Ordem);
-  printf("Adding to LicensePlate\n");
+  printf("Adding to LicensePlate...\n");
   *byLicensePlate = addSample(*byLicensePlate, nL, placa_Ordem);
-  printf("Adding to byYear\n");
+  printf("Adding to byYear...\n");
   *byYear = addSample(*byYear, nL, ano_Ordem);
 
 }
 
 void listBy(lista *mainList, tree *byYear, tree *byBrand){
   int x = 0;
-  printf("0 - Sort by \"Placa\"\n"
+  printf("\n0 - Sort by \"Placa\"\n"
          "1 - Sort by Year\n"
-         "2 - Sort by \"Marca\"\n");
+         "2 - Sort by \"Marca\"\n\n\n");
 
   scanf("%i", &x);
 
   switch (x) {
     case 0: {
+      printf("Listando por Placa:\n");
       callback(mainList, printVeiculo, nullptr);
       break;
     }
     case 1: {
+      printf("Listando por Ano:\n");
       emordem(byYear, nullptr, printTree);
       break;
     }
     case 2: {
+      printf("Listando por Marca:\n");
       emordem(byBrand, nullptr, printTree);
       break;
     }
   default:
     break ;
   }
+
+  printf("\n________________-\n");
 }
 
 void *searchBy(tree *byLicensePlate){
   char *query = malloc(sizeof(char)*100);
 
-  printf("PLACA: ");
+  printf("Placa: ");
   veiculo queryWrapper;
   scanf("%s", query);
   lista wrapper;
@@ -69,6 +76,8 @@ void *searchBy(tree *byLicensePlate){
   printf("%s", query);
   tree *no_used = nullptr;
   tree *result = search(byLicensePlate, &wrapper, placa_Ordem, &no_used);
+
+  free(query);
   if (result) {
     printTree(result, nullptr);
     return result;
@@ -78,14 +87,27 @@ void *searchBy(tree *byLicensePlate){
   return result;
 }
 
-
 void deleteVehicle(void *list, tree **byYear,
                    tree **byLicensePlate, tree **byBrand){
 
+  printf("Deletando nas árvores...\n");
   *byBrand = emordemDelete(*byBrand, list);
   *byLicensePlate = emordemDelete(*byLicensePlate, list);
   *byYear = emordemDelete(*byYear, list);
 }
+
+void valgrindOk(lista **mainList, tree **byYear,
+                 tree **byLicensePlate, tree **byBrand){
+  while (*mainList){
+    deleteDataVehicle(((lista *)*mainList)->data);
+    *mainList = callbackDelete(*mainList, (lista *)(*mainList));
+  }
+
+  destroy(*byLicensePlate);
+  destroy(*byYear);
+  destroy(*byBrand);
+}
+
 int main() {
     printf("Hello, World!\n");
 
@@ -100,11 +122,9 @@ int main() {
       printf("0 -- Exit\n"
              "1 -- Add\n"
              "2 -- List\n"
-             "3 -- Search by \"Placa\"\n"
+             "3 -- Search by \"Placa\"\n\n\n"
              );
       scanf("%i", &x);
-      printf("___%i___", x);
-
 
 
       switch (x) {
@@ -114,6 +134,7 @@ int main() {
           break ;
         }
         case 2:{
+
           listBy(mainList, byYear, byBrand);
           break ;
         }
@@ -125,12 +146,10 @@ int main() {
                    "1 -- Sim\n");
 
             scanf("%i", &x);
-
             if(x){
-
+              deleteDataVehicle(((lista *)((tree *)res)->data)->data);
+              mainList = callbackDelete(mainList, (lista *)((tree *)res)->data);
               deleteVehicle(((tree *)res)->data, &byYear, &byLicensePlate, &byBrand);
-              mainList = callbackDelete(mainList, ((tree *)res)->data);
-              printf("Deletando\n");
             }
 
             x = 1;
@@ -142,5 +161,7 @@ int main() {
         }
       }
     }while (x);
+
+    valgrindOk(&mainList, &byYear, &byLicensePlate, &byBrand);
     return 0;
 }

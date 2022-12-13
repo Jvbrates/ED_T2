@@ -4,9 +4,11 @@
 #include <stdbool.h>
 
 #ifndef T2__ARVORES_H
+
 #define T2__ARVORES_H
 #include "lista.h"
 #include <stdlib.h>
+
 #ifndef nullprt
 #define nullptr NULL
 #endif
@@ -31,7 +33,11 @@ tree *addSample(tree *root, void *data, ordem (*f_lessthan)(void *, void *));
  * they equality and ohter than set if less than the comparative node*/
 tree *search(tree *root, void *data, ordem (*f_search)(void *, void *), tree **father);
 
+//Return the more left descendent from node/tree
 tree *moreLeft(tree *T, tree **father);
+
+void destroy(tree *root);
+
 //Specific
 ordem placa_Ordem(void *data1, void *data2);
 

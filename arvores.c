@@ -6,8 +6,6 @@
 #include <stdlib.h>
 #include "lista.h"
 #include <string.h>
-#include <stdio.h>
-
 
 //General
 tree * createTree(void *data){
@@ -23,12 +21,12 @@ tree * createTree(void *data){
 
 tree *addSample(tree *root, void *data, ordem (*f_lessthan)(void *, void *)){
     if(root){
-      printf("Antes de F_lessthan\n");
+      //printf("Antes de F_lessthan\n");
         if((*f_lessthan)(data, root->data) == HIGHER){
-            printf("Erro em F_lessthan\n");
+            //printf("Erro em F_lessthan\n");
             root->dir = addSample(root->dir, data, f_lessthan);
         } else{
-            printf("Indo à esquerda\n");
+            //printf("Indo à esquerda\n");
             root->esq = addSample(root->esq, data, f_lessthan);
 
         }
@@ -55,7 +53,7 @@ tree *search(tree *root, void *data, ordem (*f_search)(void *, void *), tree **f
     if(root){
       ordem result = f_search(root->data, data);
       if(result == EQUAL){
-        printf("Igual\n");
+        //printf("Igual\n");
         return root;
       } else if (result == LESS){
         *father = root;//Buffer
@@ -109,7 +107,6 @@ void * emordemDelete(tree *root, void *data){
   if(!root)
     return nullptr;
 
-  printf("Comparando %p -- %p", root->data, data);
   if(root->data == data){
     if(root->esq && root->dir){
       tree  * T  = moreLeft(root->dir, nullptr);
@@ -133,6 +130,15 @@ void * emordemDelete(tree *root, void *data){
     root->dir = emordemDelete(root->dir, data);
 
   return root;
+}
+
+void destroy(tree *root){
+  if(root){
+    destroy(root->esq);
+    destroy(root->dir);
+
+    free(root);
+  }
 }
 
 //Spec
