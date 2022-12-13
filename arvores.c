@@ -21,20 +21,20 @@ tree * createTree(void *data){
     return nT;
 }
 
-tree *addSample(tree *root, void *data, bool (*f_lessthan)(void *, void *)){
+tree *addSample(tree *root, void *data, ordem (*f_lessthan)(void *, void *)){
     if(root){
       printf("Antes de F_lessthan\n");
-        if((*f_lessthan)(root->data, data)){
+        if((*f_lessthan)(data, root->data) == HIGHER){
             printf("Erro em F_lessthan\n");
             root->dir = addSample(root->dir, data, f_lessthan);
-        } else {
-            printf("Erro em F_lessthan\n");
+        } else{
+            printf("Indo à esquerda\n");
             root->esq = addSample(root->esq, data, f_lessthan);
+
         }
 
 
     } else {
-        printf("Não deve cair aqui\n");
         tree * nNode = createTree(data);
         return nNode;
     }
@@ -42,13 +42,17 @@ tree *addSample(tree *root, void *data, bool (*f_lessthan)(void *, void *)){
     return root;
 }
 
-tree *search(tree *root, void *data, bool (*f_find)(void *, void *), bool (*f_lessthan)(void *, void *)){
-    if(root && !(*f_find)((void *)root, data)){
-        if((*f_lessthan)(root->data, data)){
-            return search(root->dir, data, f_find, f_lessthan);
-        } else {
-            return search(root->esq, data, f_find, f_lessthan);
-        }
+tree *search(tree *root, void *data, ordem (*f_search)(void *, void *)){
+    if(root){
+      ordem result = f_search(root->data, data);
+      if(result == EQUAL){
+        printf("Igual\n");
+        return root;
+      } else if (result == LESS){
+        return search(root->dir, data, f_search);
+      } else {
+        return search(root->esq, data, f_search);
+      }
     }
     return root;
 }
@@ -91,57 +95,44 @@ void * emordem(tree *root, void *data,void *(* Func)(void *, void *)){
 }
 //Spec
 
-bool placa_lessthan(void *data1, void *data2){
+ordem placa_Ordem(void *data1, void *data2){
   veiculo *v1 = (veiculo *)((lista *)data1)->data;
   veiculo *v2 = (veiculo *)((lista *)data2)->data;
+  int x =  strcmp(v1->placa, v2->placa);
 
-  int x = strcmp(v1->placa, v2->placa);
-
-  if(x < 0)
-    return true;
-  return false;
+  if(x == 0 )
+    return  EQUAL;
+  if(x>0)
+    return HIGHER;
+  return LESS;
 }
 
-bool marca_lessthan(void *data1, void *data2){
+ordem marca_Ordem(void *data1, void *data2){
   veiculo *v1 = (veiculo *)((lista *)data1)->data;
   veiculo *v2 = (veiculo *)((lista *)data2)->data;
+  int x =  strcmp(v1->marca, v2->marca);
 
-  int x = strcmp(v1->marca, v2->marca);
-
-  if(x < 0)
-    return true;
-  return false;
+  if(x == 0 )
+    return  EQUAL;
+  if(x>0)
+    return HIGHER;
+  return LESS;
 }
-
-bool placa_find(void *rootV, void *dataV){
-  veiculo  * v1 = (veiculo *)((lista *)rootV)->data;
-  char  * v2 = (char *)dataV;
-
-  return !strcmp(v1->placa, v2);
-
-}
-
-bool marca_find(void *rootV, void *dataV) {
-  veiculo *v1 = (veiculo *)((lista *)rootV)->data;
-  char *v2 = (char *)dataV;
-
-  return !strcmp(v1->marca, v2);
-}
-
 
 //Ano
-bool ano_lessthan(void *data1, void *data2){
-  veiculo *v1 = (veiculo *)((lista *)data1)->data;
-  veiculo *v2 = (veiculo *)((lista *)data2)->data;
+ordem ano_Ordem(void *data1, void *data2){
+  int year1 =  ((veiculo *)((lista *)data1)->data)->ano;
+  int year2 =  ((veiculo *)((lista *)data2)->data)->ano;
 
-  return (v1->ano < v2->ano);
+  if(year1 > year2){
+    return HIGHER;
+  }
 
-}
+  if(year1 < year2){
+    return LESS;
+  }
 
-bool ano_find(void *rootV, void *dataV) {
-  veiculo *v1 = (veiculo *)((lista *)rootV)->data;
-  int *v2 = (int *)dataV;
-  return (v1->ano == *v2);
+  return EQUAL;
 }
 
 //Print
