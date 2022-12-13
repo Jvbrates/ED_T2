@@ -67,7 +67,8 @@ void *searchBy(tree *byLicensePlate){
   wrapper.data = &queryWrapper;
   queryWrapper.placa = query;
   printf("%s", query);
-  tree *result = search(byLicensePlate, &wrapper, placa_Ordem);
+  tree *no_used = nullptr;
+  tree *result = search(byLicensePlate, &wrapper, placa_Ordem, &no_used);
   if (result) {
     printTree(result, nullptr);
     return result;
@@ -77,6 +78,14 @@ void *searchBy(tree *byLicensePlate){
   return result;
 }
 
+
+void deleteVehicle(void *list, tree **byYear,
+                   tree **byLicensePlate, tree **byBrand){
+
+  *byBrand = emordemDelete(*byBrand, list);
+  *byLicensePlate = emordemDelete(*byLicensePlate, list);
+  *byYear = emordemDelete(*byYear, list);
+}
 int main() {
     printf("Hello, World!\n");
 
@@ -86,43 +95,6 @@ int main() {
     tree  *byBrand = nullptr;
 
     int x;
-/*    scanf("%i", &x);
-
-    while (x){
-      switch (x) {
-      case 1: {
-        addVehicle(&mainList, &byYear,
-                   &byLicensePlate, &byBrand);
-        break ;
-      }
-      case 2:{
-        printf("\nDELETE%i\n", x);
-        callback(mainList, printVeiculo, nullptr);
-       // printVeiculo(mainList->previous, nullptr);
-        printf("\nDELETE%i\n", x);
-        mainList = callbackDelete(mainList, mainList->next->next->next);
-        //printVeiculo(mainList->next->next, nullptr);
-
-        printf("\nPRINTE%i\n", x);
-        callback(mainList, printVeiculo, nullptr);
-        //return 0;
-        break ;
-      }}
-      printf("%i", x);
-      scanf("%i", &x);
-    }
-
-    printf("Em ordem por ano \n");
-    emordem(byYear, nullptr, printTree);
-
-    printf("Em ordem por marca \n");
-    emordem(byBrand, nullptr, printTree);
-
-    printf("Em ordem por Placa \n");
-    emordem(byLicensePlate, nullptr, printTree);
-
-    printf("A propria Lista\n");
-    callback(mainList, printVeiculo, nullptr);*/
 
     do {
       printf("0 -- Exit\n"
@@ -146,7 +118,8 @@ int main() {
           break ;
         }
         case 3:{
-          if(searchBy(byLicensePlate)){
+          void * res = searchBy(byLicensePlate);
+          if(res){
             printf("Deletar:\n"
                    "0 -- Não\n"
                    "1 -- Sim\n");
@@ -154,6 +127,9 @@ int main() {
             scanf("%i", &x);
 
             if(x){
+
+              deleteVehicle(((tree *)res)->data, &byYear, &byLicensePlate, &byBrand);
+              mainList = callbackDelete(mainList, ((tree *)res)->data);
               printf("Deletando\n");
             }
 

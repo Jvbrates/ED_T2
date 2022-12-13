@@ -42,16 +42,27 @@ tree *addSample(tree *root, void *data, ordem (*f_lessthan)(void *, void *)){
     return root;
 }
 
-tree *search(tree *root, void *data, ordem (*f_search)(void *, void *)){
+tree *moreLeft(tree *T, tree **father){
+  if(T->esq){
+    *father = T;
+    return moreLeft(T->esq, father);
+  }
+  return T;
+}
+
+
+tree *search(tree *root, void *data, ordem (*f_search)(void *, void *), tree **father){
     if(root){
       ordem result = f_search(root->data, data);
       if(result == EQUAL){
         printf("Igual\n");
         return root;
       } else if (result == LESS){
-        return search(root->dir, data, f_search);
+        *father = root;//Buffer
+        return search(root->dir, data, f_search, father);
       } else {
-        return search(root->esq, data, f_search);
+        *father = root;
+        return search(root->esq, data, f_search, father);
       }
     }
     return root;
@@ -93,6 +104,37 @@ void * emordem(tree *root, void *data,void *(* Func)(void *, void *)){
   }
   return nullptr;
 }
+
+void * emordemDelete(tree *root, void *data){
+  if(!root)
+    return nullptr;
+
+  printf("Comparando %p -- %p", root->data, data);
+  if(root->data == data){
+    if(root->esq && root->dir){
+      tree  * T  = moreLeft(root->dir, nullptr);
+      root->data = T->data;
+      root->dir = emordemDelete(root->dir, T);
+
+      return root;
+    } else if (!root->esq){
+      tree  * T = root->dir;
+      free(root);
+      return T;
+    } else {
+      tree  * T = root->esq;
+      free(root);
+      return T;
+    }
+  }
+
+
+    root->esq = emordemDelete(root->esq, data);
+    root->dir = emordemDelete(root->dir, data);
+
+  return root;
+}
+
 //Spec
 
 ordem placa_Ordem(void *data1, void *data2){
@@ -135,7 +177,7 @@ ordem ano_Ordem(void *data1, void *data2){
   return EQUAL;
 }
 
-//Print
+
 
 void * printTree(void *node, void* null){
   printVeiculo(((tree *)node)->data, nullptr);

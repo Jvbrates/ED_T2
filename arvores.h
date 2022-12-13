@@ -6,6 +6,7 @@
 #ifndef T2__ARVORES_H
 #define T2__ARVORES_H
 #include "lista.h"
+#include <stdlib.h>
 #ifndef nullprt
 #define nullptr NULL
 #endif
@@ -26,14 +27,12 @@ tree * createTree(void *data);
 /* Add a node to tree, the balancete is not implemented*/
 tree *addSample(tree *root, void *data, ordem (*f_lessthan)(void *, void *));
 
-
 /* This function search in the tree using two argument functions one that verify
  * they equality and ohter than set if less than the comparative node*/
-tree *search(tree *root, void *data, ordem (*f_search)(void *, void *));
+tree *search(tree *root, void *data, ordem (*f_search)(void *, void *), tree **father);
 
-
+tree *moreLeft(tree *T, tree **father);
 //Specific
-
 ordem placa_Ordem(void *data1, void *data2);
 
 ordem marca_Ordem(void *data1, void *data2);
@@ -41,6 +40,8 @@ ordem marca_Ordem(void *data1, void *data2);
 ordem ano_Ordem(void *data1, void *data2);
 
 void * emordem(tree *root, void *data,void *(* Func)(void *, void *));
+
+void * emordemDelete(tree *root, void *data);
 
 void * printTree(void *node, void* null);
 
